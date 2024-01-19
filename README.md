@@ -9,6 +9,7 @@ In this design, both absolute and relative positions are considered, learnable, 
 
 ## Deliverables
 Paragraph response to question 1 is in *deliverables/Question1.pdf*
+
 5 min video to question 2 is in *deliverables/learnable_position_encoding_method.mp4*
 
 ## Run
