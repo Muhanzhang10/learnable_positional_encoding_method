@@ -16,3 +16,5 @@ To check the model with single outputs (with dummy data), run
 
 ## Citations
 [Guolin Ke, Di He, Tieyan Liu. "RETHINKING POSITIONAL ENCODING IN LANGUAGE PRE-TRAINING" ICLR 2021, 2021.](https://arxiv.org/pdf/2006.15595.pdf)
+
+[Peter Shaw, Jakob Uszkoreit, Ashish Vaswani. "Self-Attention with Relative Position Representations", 20218.](https://arxiv.org/pdf/1803.02155.pdf)
