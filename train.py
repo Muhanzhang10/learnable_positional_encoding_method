@@ -35,3 +35,5 @@ def train():
         optimizer.step()  # Update weights
         print(loss)
 train()
+
+print("training ran successfuly")
