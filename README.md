@@ -15,4 +15,4 @@ To check the model with single outputs (with dummy data), run
 `python3 test.py`
 
 ## Citations
-[Guolin Ke, Di He, Tieyan Liu. "RETHINKING POSITIONAL ENCODING IN LANGUAGE PRE-TRAINING" ICLR 2021, 2021.](https://arxiv.org/pdf/2006.15595.pdf))
+[Guolin Ke, Di He, Tieyan Liu. "RETHINKING POSITIONAL ENCODING IN LANGUAGE PRE-TRAINING" ICLR 2021, 2021.](https://arxiv.org/pdf/2006.15595.pdf)
