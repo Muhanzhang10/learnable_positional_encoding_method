@@ -13,6 +13,9 @@ Paragraph response to question 1 is in *deliverables/Question1.pdf*
 5 min video to question 2 is in *deliverables/learnable_position_encoding_method.mp4*
 
 ## Run
+Install dependencies (only torch for now)
+`pip3 install -r requirements.txt`
+
 To train the model (with dummy data), run 
 `python3 train.py`
 
@@ -22,4 +25,6 @@ To check the model with single outputs (with dummy data), run
 ## Citations
 [Guolin Ke, Di He, Tieyan Liu. "RETHINKING POSITIONAL ENCODING IN LANGUAGE PRE-TRAINING" ICLR 2021, 2021.](https://arxiv.org/pdf/2006.15595.pdf)
 
-[Peter Shaw, Jakob Uszkoreit, Ashish Vaswani. "Self-Attention with Relative Position Representations", 20218.](https://arxiv.org/pdf/1803.02155.pdf)
+[Junshuang Wu, Richong Zhang, Yongyi Mao, Junfan Chen. "On Scalar Embedding of Relative Positions in Attention Models", AAAI-21, 2021.](https://ojs.aaai.org/index.php/AAAI/article/view/17654)
+
+[Peter Shaw, Jakob Uszkoreit, Ashish Vaswani. "Self-Attention with Relative Position Representations", 2018.](https://arxiv.org/pdf/1803.02155.pdf)

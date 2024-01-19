@@ -29,7 +29,7 @@ class MultiheadAttention(nn.Module):
         nn.init.xavier_uniform_(self.o_proj.weight)
         self.o_proj.bias.data.fill_(0)
 
-    def forward(self, x, absolute_positional_bias, relative_positional_bias, return_attention=False):
+    def forward(self, x, absolute_positional_bias=None, relative_positional_bias=None, return_attention=False):
         x = x.permute(1,0,-1)
         batch_size, seq_length, _ = x.size()
         qkv = self.qkv_proj(x)
@@ -41,16 +41,19 @@ class MultiheadAttention(nn.Module):
 
         # Determine value outputs
         d_k = q.size()[-1]
+
         attn_logits = torch.matmul(q, k.transpose(-2, -1))
         
+        scaling_factor = 2
+        attn_logits = attn_logits / math.sqrt(scaling_factor * d_k)
+        
+        # add relative positional bias
+        if relative_positional_bias is not None:
+            attn_logits += relative_positional_bias
         # add absolute positional bias
         if absolute_positional_bias is not None:
             attn_logits = absolute_positional_bias
-        attn_logits = attn_logits / math.sqrt(d_k)
-        
-        # add relative positional bias after multiplying by root dk 
-        if relative_positional_bias is not None:
-            attn_logits += relative_positional_bias
+            
         attention = F.softmax(attn_logits, dim=-1)
         values = torch.matmul(attention, v)
         

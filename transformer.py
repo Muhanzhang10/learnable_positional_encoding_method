@@ -79,12 +79,17 @@ class TransformerSentenceEncoder(nn.Module):
             ]
         )
 
-        #Initialize relative position
+        # Initialize relative position
         self.rel_pos_bins = rel_pos_bins
         self.relative_attention_bias = nn.Embedding(self.rel_pos_bins + 1, self.num_attention_heads)
-        context_position = torch.arange(self.seq_len, dtype=torch.long)[:, None]
-        memory_position = torch.arange(self.seq_len, dtype=torch.long)[None, :]
-        relative_position = memory_position - context_position
+        context_position = torch.arange(self.seq_len, dtype=torch.long)[:, None] # The current positions
+        
+        # Using broadcasting we create a matrix that describes the relative distance
+        # between any two positions
+        memory_position = torch.arange(self.seq_len, dtype=torch.long)[None, :] # The position looked up against
+        
+        # Initialize buckets
+        relative_position = memory_position - context_position 
         self.rp_bucket = relative_position_bucket(
                 relative_position,
                 num_buckets=self.rel_pos_bins,
@@ -115,17 +120,22 @@ class TransformerSentenceEncoder(nn.Module):
         seq_len = x.size(0)
         # compute absolute positional bias
         weight = self.pos_ln(self.pos.weight[:seq_len, :])  # Absolute positional embedding: pi & pj, pos_ln used to normalize parameters
-        pos_q =  self.pos_q_linear(weight).view(seq_len, self.num_attention_heads, -1).transpose(0, 1) * self.pos_scaling
+        pos_q =  self.pos_q_linear(weight).view(seq_len, self.num_attention_heads, -1).transpose(0, 1) * 1/self.pos_scaling
         pos_k =  self.pos_k_linear(weight).view(seq_len, self.num_attention_heads, -1).transpose(0, 1)
-        abs_pos_bias = torch.bmm(pos_q, pos_k.transpose(1, 2))
+        abs_pos_bias = torch.bmm(pos_q, pos_k.transpose(1, 2)) # pi*U_q @ (pj*U_k).T
 
         # expand encoding to batch size
         abs_pos_bias = abs_pos_bias.unsqueeze(0).expand(x.size(1), -1, -1, -1)
         rel_pos_bias = rel_pos_bias.unsqueeze(0).expand(x.size(1), -1, -1, -1)
 
 
-        for layer in self.layers:
-            x = layer(x, absolute_positional_bias=abs_pos_bias, relative_positional_bias=rel_pos_bias)
+        for i in range(len(self.layers)):
+            # We only need to encode the positional biases in the first layer
+            # The rest of the layer carries the encoded positional biases information with their input
+            if i == 0:
+                x = self.layers[i](x, absolute_positional_bias=abs_pos_bias, relative_positional_bias=rel_pos_bias)
+                continue 
+            x = self.layers[i](x)
 
         # T x B x C -> B x T x C
         x = x.transpose(0, 1)
